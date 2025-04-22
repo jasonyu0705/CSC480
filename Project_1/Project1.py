@@ -1,39 +1,59 @@
 import sys # in order to access command line prompts
 from collections import deque
 
-def dfs(robotPos, grid, finishedPath , visited, expandedNodes,generatedNodes):
+def dfs(visited,path, expandedNodes,generatedNodes):
+    global grid
+    global robotPos
     expandedNodes+=1
-    # Check if there's any dirty tile left --> idk if im allowed to use this
-    if not any('*' in row for row in grid):  
-        return finishedPath
-    #add the node your looking at to visited set
-    visited.add(robotPos)
-    for move in ['N','E','S','W','V']:#for each move to the action adn then recursively call dfs
-        newRowPos=robotPos[0]
-        newColPos=robotPos[1]
-        if move == 'N': newRowPos-=1
-        elif move == 'E':newColPos+=1
-        elif move == 'S':newRowPos+=1
-        elif move == 'W':newColPos-=1
-        elif move == 'V':
-            if grid[newRowPos][newColPos] == '*':# if the tile is dirty then clean it
-                grid[newRowPos][newColPos] == '-'
-            #reset the position if ur cleaning you shouldnt move
-            newRowPos, newColPos = robotPos
-        # if ur not making an illegal move and your not blocking anything then 
-        if 0<= newRowPos < len(grid) and 0<= newColPos < len(grid[0]) and grid[newRowPos][newColPos] != '#':
-            newRobotPos=(newRowPos,newColPos)
-            # if the new position not in visited set then incrument genetrated nodes
-            if newRobotPos not in visited:
-                generatedNodes+=1
-                print("finishedPath",finishedPath)
-                print("move made",move)
-                #recursively call DFS with the only difference being adding the move to the finished path
-                
-                steps=dfs(newRobotPos, grid, finishedPath+ [move], visited, expandedNodes,generatedNodes)
-                if steps is not None:
-                    return steps
+    row=robotPos[0]
+    col=robotPos[1]
+    if grid[row][col] == '*':# if the tile is dirty then clean it
+        grid[row][col] = '-'
+        return path+"V"
+    
+    print(len(grid))
+    print(len(grid[0]))
+    print(row)
+    print(col)
+    if 0<= row-1 < len(grid) and 0<= col < len(grid[0]) and grid[row-1][col] != '#' and (row-1,col) not in visited:
+        robotPos=(row-1,col)
+        visited.add(robotPos)
+        findPath= dfs(visited,path+"N", expandedNodes,generatedNodes)
+        if findPath is not None:
+            return findPath
+    if 0<= row < len(grid) and 0<= col+1 < len(grid[0]) and grid[row][col+1] != '#'and (row,col+1) not in visited:
+        robotPos=(row,col+1)
+        visited.add(robotPos)
+        findPath= dfs(  visited,path+"E", expandedNodes,generatedNodes)
+        if findPath is not None:
+            return findPath
+    if 0<= row+1 < len(grid) and 0<= col < len(grid[0]) and grid[row+1][col] != '#'and (row+1,col) not in visited:
+        robotPos=(row+1,col)
+        visited.add(robotPos)
+        findPath= dfs(  visited,path+"S", expandedNodes,generatedNodes)
+        if findPath is not None:
+            return findPath
+    if 0<= row < len(grid) and 0<= col-1 < len(grid[0]) and grid[row][col-1] != '#'and (row,col-1) not in visited:
+        robotPos=(row,col-1)
+        visited.add(robotPos)
+        findPath= dfs(  visited,path+"W", expandedNodes,generatedNodes)
+        if findPath is not None:
+            return findPath 
+
     return None
+   
+
+    # newRobotPos=(newRowPos,newColPos)
+    # # if the new position not in visited set then incrument genetrated nodes
+    # if newRobotPos not in visited:
+    #     generatedNodes+=1
+    #     print("move made",move)
+    #     #recursively call DFS with the only difference being adding the move to the finished path
+        
+
+    #     if steps is not None:
+    #         return steps
+    # return None
 
 #essentially just BFS
 def ucs(robotPos,dirtyTiles, grid, finishedPath, expandedNodes,generatedNodes):
@@ -42,8 +62,13 @@ def ucs(robotPos,dirtyTiles, grid, finishedPath, expandedNodes,generatedNodes):
     visited.add(robotPos)
     return None
 
-
+grid = [[]]
+robotPos=(0,0)
 def main():
+    global grid
+    global robotPos
+    steps=""
+    
     testing= True
     # if statement that just makes testing easier
     if testing == True:
@@ -70,6 +95,7 @@ def main():
         for col in range(len(grid[row])):
             if grid[row][col] == '@':
                 robotPos = (row, col)
+    
     #from here set initial position and then you can choose whether to go into dfs and bfs, which will be functions 
 
     expandedNodes=0
@@ -77,8 +103,19 @@ def main():
     #going into actual algorithm
     if algorithm == "depth-first":
         visitedSet=set()
-        steps=dfs(robotPos, grid, [], visitedSet, expandedNodes,generatedNodes)
-        print(steps)
+        while(True):
+            print("before position "+str(robotPos))
+            call=dfs( visitedSet,"", expandedNodes,generatedNodes)
+            print("after position "+str(robotPos))
+            
+            if call is not None:
+  
+                steps=steps+call
+
+                visitedSet=set()
+            else:
+                break
+        print("asdasdasdasdas      "+steps)
         print("DFS")
     elif algorithm == "uniform-cost":
         #call UCS
@@ -86,9 +123,5 @@ def main():
     else:
         print("Invalid input")
         
-        
-
-
-
 if __name__ == "__main__":
     main()

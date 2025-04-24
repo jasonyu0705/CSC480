@@ -42,37 +42,42 @@ def ucs(path, expandedNodes,generatedNodes):
     global grid
     global robotPos
     global queue
+    counter=0
     queue.append((robotPos, "")) 
-    visited=set()
+    visited={robotPos}
     generatedNodes += 1
-    row=robotPos[0]
-    col=robotPos[1]
     # check some initial position too keep in the while loop
-    while 0<= row < len(grid) and 0<= col < len(grid[0]) and grid[row][col] != '#' :
+    #while 0<= row < len(grid) and 0<= col < len(grid[0]) and grid[row][col] != '#' :
+    while queue:
         (row,col), path = queue.popleft()
         expandedNodes += 1 
-        visited.add(robotPos)
+        robotPos=(row,col)
         if grid[row][col] == '*':
             grid[row][col] = '-' 
             return path+"V" 
+        print("robot position "+str(robotPos))
+        print("asrdasdasdasdasd     "+str(queue))
         #for every position in the while loop, check to see whether the neighnbour is valid and if so then add it to the queue 
         for move in ['N', 'E', 'S', 'W']:
             if move == 'N' and 0<= row-1 < len(grid) and 0<= col < len(grid[0]) and grid[row-1][col] != '#' and (row-1,col) not in visited:
-                robotPos=(row-1,col)
-                queue.append((robotPos, path + "N"))
+                #robotPos=(row-1,col)
+                queue.append(((row-1,col), path + "N"))
 
             if move == 'E' and 0<= row < len(grid) and 0<= col+1 < len(grid[0]) and grid[row][col+1] != '#' and (row,col+1) not in visited:
-                robotPos=(row,col+1)
-                queue.append((robotPos, path + "E"))
+                #robotPos=(row,col+1)
+                queue.append(((row,col+1), path + "E"))
 
             if move == 'S' and 0<= row+1 < len(grid) and 0<= col < len(grid[0]) and grid[row+1][col] != '#' and (row+1,col) not in visited:
-                robotPos=(row+1,col)
-                queue.append((robotPos, path + "S"))
+                #robotPos=(row+1,col)
+                queue.append(((row+1,col), path + "S"))
 
             if move == 'W' and 0<= row < len(grid) and 0<= col-1 < len(grid[0]) and grid[row][col-1] != '#' and (row,col-1) not in visited:
-                robotPos=(row,col-1)
-                queue.append((robotPos, path + "W")) 
+                #robotPos=(row,col-1)
+                queue.append(((row,col-1), path + "W")) 
             print(queue)
+        if counter == 2:
+            break  
+        counter+=1
     return None      
 
 

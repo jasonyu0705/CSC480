@@ -7,14 +7,10 @@ def dfs(visited,path, expandedNodes,generatedNodes):
     expandedNodes+=1
     row=robotPos[0]
     col=robotPos[1]
-    if grid[row][col] == '*':# if the tile is dirty then clean it
+    if grid[row][col] == '*':
         grid[row][col] = '-'
         return path+"V"
     
-    print(len(grid))
-    print(len(grid[0]))
-    print(row)
-    print(col)
     if 0<= row-1 < len(grid) and 0<= col < len(grid[0]) and grid[row-1][col] != '#' and (row-1,col) not in visited:
         robotPos=(row-1,col)
         visited.add(robotPos)
@@ -39,31 +35,54 @@ def dfs(visited,path, expandedNodes,generatedNodes):
         findPath= dfs(  visited,path+"W", expandedNodes,generatedNodes)
         if findPath is not None:
             return findPath 
-
     return None
-   
-
-    # newRobotPos=(newRowPos,newColPos)
-    # # if the new position not in visited set then incrument genetrated nodes
-    # if newRobotPos not in visited:
-    #     generatedNodes+=1
-    #     print("move made",move)
-    #     #recursively call DFS with the only difference being adding the move to the finished path
-        
-
-    #     if steps is not None:
-    #         return steps
-    # return None
 
 #essentially just BFS
-def ucs(robotPos,dirtyTiles, grid, finishedPath, expandedNodes,generatedNodes):
-    queue = deque([(robotPos, [])])  # (current position, path taken to get here)
-    visited = set()
-    visited.add(robotPos)
-    return None
+def ucs(path, expandedNodes,generatedNodes):
+    global grid
+    global robotPos
+    global queue
+    queue.append((robotPos, "")) 
+    visited=set()
+    generatedNodes += 1
+    row=robotPos[0]
+    col=robotPos[1]
+    # check some initial position too keep in the while loop
+    while 0<= row < len(grid) and 0<= col < len(grid[0]) and grid[row][col] != '#' :
+        (row,col), path = queue.popleft()
+        expandedNodes += 1 
+        visited.add(robotPos)
+        if grid[row][col] == '*':
+            grid[row][col] = '-' 
+            return path+"V" 
+        #for every position in the while loop, check to see whether the neighnbour is valid and if so then add it to the queue 
+        for move in ['N', 'E', 'S', 'W']:
+            if move == 'N' and 0<= row-1 < len(grid) and 0<= col < len(grid[0]) and grid[row-1][col] != '#' and (row-1,col) not in visited:
+                robotPos=(row-1,col)
+                queue.append((robotPos, path + "N"))
 
+            if move == 'E' and 0<= row < len(grid) and 0<= col+1 < len(grid[0]) and grid[row][col+1] != '#' and (row,col+1) not in visited:
+                robotPos=(row,col+1)
+                queue.append((robotPos, path + "E"))
+
+            if move == 'S' and 0<= row+1 < len(grid) and 0<= col < len(grid[0]) and grid[row+1][col] != '#' and (row+1,col) not in visited:
+                robotPos=(row+1,col)
+                queue.append((robotPos, path + "S"))
+
+            if move == 'W' and 0<= row < len(grid) and 0<= col-1 < len(grid[0]) and grid[row][col-1] != '#' and (row,col-1) not in visited:
+                robotPos=(row,col-1)
+                queue.append((robotPos, path + "W")) 
+            print(queue)
+    return None      
+
+
+# # Check if the new position is within bounds and not blocked
+            # if 0 <= newRowPos < len(grid) and 0 <= newColPos < len(grid[0]) and grid[newRowPos][newColPos] != '#':
+            #     newRobotPos = (newRowPos, newColPos)  # New robot position
+            # queue.append((newRobotPos, path + [move]))
 grid = [[]]
 robotPos=(0,0)
+queue=deque()
 def main():
     global grid
     global robotPos
@@ -72,7 +91,7 @@ def main():
     testing= True
     # if statement that just makes testing easier
     if testing == True:
-        algorithm = "depth-first"
+        algorithm = "uniform-cost"
         file = "sample-5x7.txt"
     if testing == False:
         if len(sys.argv) != 3:
@@ -109,17 +128,23 @@ def main():
             print("after position "+str(robotPos))
             
             if call is not None:
-  
                 steps=steps+call
-
                 visitedSet=set()
             else:
                 break
         print("asdasdasdasdas      "+steps)
-        print("DFS")
     elif algorithm == "uniform-cost":
-        #call UCS
-        print("UCS")
+        #visitedSet=set()
+        while(True):
+            print("before position "+str(robotPos))
+            call=ucs( "", expandedNodes,generatedNodes)#visited set
+            print("after position "+str(robotPos))
+            if call is not None:
+                steps=steps+call
+                #visitedSet=set()
+            else:
+                break 
+        print("asdasdasdasdas      "+steps)
     else:
         print("Invalid input")
         

@@ -41,7 +41,7 @@ def dfs(visited,path, expandedNodes,generatedNodes):
 def ucs(path, expandedNodes,generatedNodes):
     global grid
     global robotPos
-    global queue
+    queue=deque()
     counter=0
     queue.append((robotPos, "")) 
     visited={robotPos}
@@ -49,35 +49,30 @@ def ucs(path, expandedNodes,generatedNodes):
     # check some initial position too keep in the while loop
     #while 0<= row < len(grid) and 0<= col < len(grid[0]) and grid[row][col] != '#' :
     while queue:
+        #print(visited)
         (row,col), path = queue.popleft()
         expandedNodes += 1 
         robotPos=(row,col)
         if grid[row][col] == '*':
-            grid[row][col] = '-' 
+            grid[row][col] = '-'
             return path+"V" 
-        print("robot position "+str(robotPos))
-        print("asrdasdasdasdasd     "+str(queue))
+        # print("robot position "+str(robotPos))
         #for every position in the while loop, check to see whether the neighnbour is valid and if so then add it to the queue 
         for move in ['N', 'E', 'S', 'W']:
             if move == 'N' and 0<= row-1 < len(grid) and 0<= col < len(grid[0]) and grid[row-1][col] != '#' and (row-1,col) not in visited:
-                #robotPos=(row-1,col)
                 queue.append(((row-1,col), path + "N"))
 
             if move == 'E' and 0<= row < len(grid) and 0<= col+1 < len(grid[0]) and grid[row][col+1] != '#' and (row,col+1) not in visited:
-                #robotPos=(row,col+1)
                 queue.append(((row,col+1), path + "E"))
 
             if move == 'S' and 0<= row+1 < len(grid) and 0<= col < len(grid[0]) and grid[row+1][col] != '#' and (row+1,col) not in visited:
-                #robotPos=(row+1,col)
                 queue.append(((row+1,col), path + "S"))
 
             if move == 'W' and 0<= row < len(grid) and 0<= col-1 < len(grid[0]) and grid[row][col-1] != '#' and (row,col-1) not in visited:
-                #robotPos=(row,col-1)
                 queue.append(((row,col-1), path + "W")) 
-            print(queue)
-        if counter == 2:
-            break  
-        counter+=1
+        visited.add((row,col))
+        # if counter==9:
+
     return None      
 
 
@@ -87,7 +82,7 @@ def ucs(path, expandedNodes,generatedNodes):
             # queue.append((newRobotPos, path + [move]))
 grid = [[]]
 robotPos=(0,0)
-queue=deque()
+
 def main():
     global grid
     global robotPos
@@ -128,27 +123,27 @@ def main():
     if algorithm == "depth-first":
         visitedSet=set()
         while(True):
-            print("before position "+str(robotPos))
+            #print("before position "+str(robotPos))
             call=dfs( visitedSet,"", expandedNodes,generatedNodes)
-            print("after position "+str(robotPos))
+            #print("after position "+str(robotPos))
             
             if call is not None:
                 steps=steps+call
                 visitedSet=set()
             else:
                 break
-        print("asdasdasdasdas      "+steps)
+        #print("asdasdasdasdas      "+steps)
     elif algorithm == "uniform-cost":
-        #visitedSet=set()
+
         while(True):
-            print("before position "+str(robotPos))
-            call=ucs( "", expandedNodes,generatedNodes)#visited set
-            print("after position "+str(robotPos))
+            call=ucs( "", expandedNodes,generatedNodes)
+            #print("call is "+str(call))
             if call is not None:
                 steps=steps+call
-                #visitedSet=set()
+                
             else:
                 break 
+            
         print("asdasdasdasdas      "+steps)
     else:
         print("Invalid input")

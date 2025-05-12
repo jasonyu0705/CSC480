@@ -314,7 +314,7 @@ def main():
     print("--------------------------------------------------")
     win_rate = total_wins / total_visits
     print("Total simulations:", total_visits)
-    print("Wins:", total_visits)
+    print("Wins:", total_wins)
     print("--------------------------------------------------")
     print("Lets do a random playout with this community and hand")
     print("your hand: ", root.state.my_hand)

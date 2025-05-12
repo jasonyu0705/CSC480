@@ -74,9 +74,9 @@ def Simulate(cards):
     # print(card_dict)
 
     flush = False
-    for suit in SUITS:            # e.g. 'H','D','C','S'
+    for suit in SUITS:           
         count = 0
-        for card_suit in suits:  # your list of suits
+        for card_suit in suits:  
             if card_suit == suit:
                 count += 1
         if count >= 5:

@@ -276,8 +276,6 @@ def main():
             print("flop: ", flop_root.state.community)
             state="preturn"
 
-            
-
         if state =="preturn" and len(root.children) >= preturn_poss:
             win_rate = root.wins / root.visits
             total_wins+=root.wins

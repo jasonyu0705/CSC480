@@ -269,7 +269,7 @@ def main():
             print(f"Estimated win rate: {win_rate * 100:.2f}%")
             print("your hand: ", root.state.my_hand)
             
-            #assign new root
+            #assign new root randomly
             flop_root=random.choice(root.children)
             # flop_root.state.community = flop_root.state.community[:2]# only grabs first 3 cards so sets the flop as consistant
             root = flop_root
